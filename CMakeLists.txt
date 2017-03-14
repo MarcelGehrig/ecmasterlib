@@ -1,6 +1,70 @@
 cmake_minimum_required(VERSION 2.6)
-project(ethercatstack)
+project(ecmasterlib)
 
-add_executable(ethercatstack main.cpp)
 
-install(TARGETS ethercatstack RUNTIME DESTINATION bin)
+include_directories(${ADDITIONAL_INCLUDE_DIRS})
+link_directories(${ADDITIONAL_LINK_DIRS})
+
+include_directories(${CMAKE_CURRENT_LIST_DIR}/include/)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/include/SDK)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/include/SDK/Linux)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
+
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+# ## Doxygen documentation target (make doc)
+# find_package(Doxygen)
+# if(DOXYGEN_FOUND)
+# 	configure_file(doc/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+# 	add_custom_target(doc ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+# 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+# 		COMMENT "Generating API documentation with Doxygen" VERBATIM )
+# endif(DOXYGEN_FOUND)
+
+
+## Install CMake configuration file
+set(INCLUDE_INSTALL_DIR include/)
+set(LIB_INSTALL_DIR lib/)
+
+include(CMakePackageConfigHelpers)
+
+configure_package_config_file(
+	cmake/ecmasterlibConfig.cmake.in
+	${CMAKE_CURRENT_BINARY_DIR}/ecmasterlibConfig.cmake
+	INSTALL_DESTINATION ${LIB_INSTALL_DIR}/ecmasterlib/cmake
+	PATH_VARS INCLUDE_INSTALL_DIR LIB_INSTALL_DIR)
+
+
+ADD_LIBRARY(ecmasterlib SHARED
+							src/EtherCATStack.cpp
+							src/EtherCATMain.cpp
+							src/ecatDemoCommon.cpp
+							src/ecatNotification.cpp
+							src/Logging.cpp
+							src/selectLinkLayer.cpp )
+							
+target_link_libraries(ecmasterlib AtemRasSrv EcMaster pthread dl rt)
+
+
+install(
+	FILES
+		${CMAKE_CURRENT_BINARY_DIR}/ecmasterlibConfig.cmake
+# 		${CMAKE_CURRENT_BINARY_DIR}/flinkConfigVersion.cmake
+	DESTINATION
+		${LIB_INSTALL_DIR}/flink/cmake)
+		
+
+add_subdirectory(src)
+# add_subdirectory(lib)
+
+
+
+
+# INSTALL(FILES EtherCATMain.hpp DESTINATION include)
+# 
+# INSTALL(TARGETS ecmasterlib
+# 	LIBRARY DESTINATION lib
+# )
+
+# add_subdirectory(include/SDK)

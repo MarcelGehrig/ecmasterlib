@@ -1,4 +1,4 @@
 [Project]
-Name=etherCATSTack
+Name=ecmasterlib
 Manager=KDevCMakeManager
 VersionControl=kdevgit

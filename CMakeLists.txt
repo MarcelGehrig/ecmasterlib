@@ -8,7 +8,7 @@ link_directories(${ADDITIONAL_LINK_DIRS})
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include/)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include/SDK)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include/SDK/Linux)
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/externalLib)
 
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -50,10 +50,12 @@ target_link_libraries(ecmasterlib AtemRasSrv EcMaster pthread dl rt)
 install(
 	FILES
 		${CMAKE_CURRENT_BINARY_DIR}/ecmasterlibConfig.cmake
-# 		${CMAKE_CURRENT_BINARY_DIR}/flinkConfigVersion.cmake
 	DESTINATION
-		${LIB_INSTALL_DIR}/flink/cmake)
-		
+		${LIB_INSTALL_DIR}/ecmasterlib/cmake
+		)
+
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/libecmasterlib.so DESTINATION lib)
+
 
 add_subdirectory(src)
 # add_subdirectory(lib)

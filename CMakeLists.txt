@@ -46,7 +46,7 @@ ADD_LIBRARY(ecmasterlib SHARED
 							
 target_link_libraries(ecmasterlib AtemRasSrv EcMaster pthread dl rt)
 
-
+# files required for 'find_package'
 install(
 	FILES
 		${CMAKE_CURRENT_BINARY_DIR}/ecmasterlibConfig.cmake
@@ -55,18 +55,10 @@ install(
 		)
 
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/libecmasterlib.so DESTINATION lib)
-
+INSTALL(FILES 	${CMAKE_CURRENT_SOURCE_DIR}/include/EtherCATMain.hpp
+				DESTINATION include)
+INSTALL(DIRECTORY 	${CMAKE_CURRENT_SOURCE_DIR}/include/SDK/
+					${CMAKE_CURRENT_SOURCE_DIR}/include/SDK/Linux/
+					DESTINATION include)
 
 add_subdirectory(src)
-# add_subdirectory(lib)
-
-
-
-
-# INSTALL(FILES EtherCATMain.hpp DESTINATION include)
-# 
-# INSTALL(TARGETS ecmasterlib
-# 	LIBRARY DESTINATION lib
-# )
-
-# add_subdirectory(include/SDK)

@@ -7,12 +7,12 @@ Current Build Directory Index=0
 ProjectRootRelative=./
 
 [CMake][CMake Build Directory 0]
-Build Directory Path=file:///home/mgehrig2/git_repos/EtherCAT/ecmasterlib/build_x86
-Build Type=Debug
+Build Directory Path=file:///home/mgehrig2/git_repos/EtherCAT/ecmasterlib/buildx86
+Build Type=
 CMake Binary=file:///usr/bin/cmake
 Environment Profile=
 Extra Arguments=
-Install Directory=file:///home/mgehrig2/git_repos/EtherCAT/install_x86
+Install Directory=file:///home/mgehrig2/git_repos/EtherCAT/installx86
 
 [Defines And Includes][Compiler]
 Name=GCC

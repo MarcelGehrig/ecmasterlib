@@ -6,6 +6,7 @@
  *---------------------------------------------------------------------------*/
 
 
+
 /*-INCLUDES------------------------------------------------------------------*/
 #include <AtEthercat.h>
 #include <EcCommon.h>
@@ -20,26 +21,41 @@
 EC_T_BYTE* pbyPDIn;
 EC_T_BYTE* pbyPDOut;
 
+// void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
+// {
+// 	static bool firstCall = true;
+// // 	if ( firstCall ) {
+// // 		startCallBackFct = clockSteady::now();
+// // 		firstCall = false;
+// // 	}
+// // 	stopCallBackFct = clockSteady::now();
+// // 	durationCallBackFct = stopCallBackFct - startCallBackFct;
+// // 	startCallBackFct = clockSteady::now();
+// 	
+// // 	std::cout << "callbackFct called" << std::endl;
+// 	
+// 	pbyPDIn = pbyPDInPtr;
+// 	pbyPDOut = pbyPDOutPtr;
+// // 	go = true;
+// 	// 	encoder = EC_GET_FRM_DWORD( pbyPDIn + 0 );
+// 	
+// 	// lese position von pointer und schreibe in globale variable von main
+// // 	if ( durationCallBackFct > durationCallBackFctMax ) durationCallBackFctMax = durationCallBackFct;
+// }
+using namespace ethercat;
 void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 {
 	static bool firstCall = true;
-// 	if ( firstCall ) {
-// 		startCallBackFct = clockSteady::now();
-// 		firstCall = false;
-// 	}
-// 	stopCallBackFct = clockSteady::now();
-// 	durationCallBackFct = stopCallBackFct - startCallBackFct;
-// 	startCallBackFct = clockSteady::now();
-	
-// 	std::cout << "callbackFct called" << std::endl;
-	
-	pbyPDIn = pbyPDInPtr;
-	pbyPDOut = pbyPDOutPtr;
-// 	go = true;
-	// 	encoder = EC_GET_FRM_DWORD( pbyPDIn + 0 );
-	
-	// lese position von pointer und schreibe in globale variable von main
-// 	if ( durationCallBackFct > durationCallBackFctMax ) durationCallBackFctMax = durationCallBackFct;
+	if ( firstCall ) {
+	//         startCallBackFct = clockSteady::now();
+		firstCall = false;
+		pbyPDIn = pbyPDInPtr;
+		pbyPDOut = pbyPDOutPtr;
+	}
+	EtherCATMain* obj = EtherCATMain::getInstance();
+	obj->inBuf.a = pbyPDOutPtr;
+	obj->inBuf.b = pbyPDInPtr;
+	obj->m.lock();
 }
 
 
@@ -1934,7 +1950,7 @@ EC_PF_LLREGISTER pfLlRegister = EC_NULL;
 
 int test(int a) {};
 
-using namespace ethercat;
+// using namespace ethercat;
 
 // void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr);
 
@@ -1957,6 +1973,17 @@ thread(mainEtherCAT, nArgc, ppArgv )
 // 	thread(mainEtherCAT, nArgc, ppArgv, callbackFctPtr);
 // 	std::thread thread = thread(mainEtherCAT, nArgc, ppArgv);
 	ecatGetMasterState();
+}
+
+EtherCATMain* EtherCATMain::instance;
+
+EtherCATMain* EtherCATMain::createInstance(int nArgc, char* ppArgv[]) {
+	if(instance == NULL) instance = new EtherCATMain(nArgc, ppArgv);
+	return instance;
+}
+
+EtherCATMain* EtherCATMain::getInstance() {
+	return instance;
 }
 
 
@@ -1990,9 +2017,14 @@ void EtherCATMain::stop()
 }
 
 EC_T_BYTE* EtherCATMain::getPbyPDIn() {
-	return pbyPDIn;
+// 	return pbyPDIn;
+	return instance->inBuf.b;
 }
 
 EC_T_BYTE* EtherCATMain::getPbyPDOut() {
-	return pbyPDOut;
+// 	return pbyPDOut;
+// 	EtherCATMain* obj = EtherCATMain::getInstance();
+// 	EC_T_BYTE* PbyPDOut;
+	return instance->inBuf.a;
+// 	return pbyPDOut;
 }

@@ -4,7 +4,7 @@ script="$(readlink -f $0)"
 script_dir="$(dirname $script)"
 
 build_dir="$script_dir/buildx86"
-install_dir="~/git_repos/EtherCAT/installx86"
+install_dir="$(dirname $script_dir)/installx86"
 
 
 rm -rf "$build_dir"

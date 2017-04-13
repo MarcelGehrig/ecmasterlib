@@ -23,46 +23,45 @@ namespace ethercat {
 		
 		BOOTSTRAP
 	};
-    
-	struct PDObuf {
-		EC_T_BYTE* a;
-		EC_T_BYTE* b;
-		EC_T_WORD c;
-	};
 	
 	
 	class EtherCATMain {
-        EtherCATMain(int nArgc, char* ppArgv[]);    
+        EtherCATMain(int nArgc, char* ppArgv[], int bufferSize);
+		~EtherCATMain();
 	public:
-// 		EtherCATMain(int nArgc, char* ppArgv[], void (*callbackFctPtr)(EC_T_BYTE* pbyPDIn, EC_T_BYTE* pbyPDOut));
-		static EtherCATMain* createInstance(int nArgc, char* ppArgv[]);
+		static EtherCATMain* createInstance(int nArgc, char* ppArgv[], int bufferSize);
 		static EtherCATMain* getInstance();
-
 		
-// 		void runStack(void (*callbackFctPtr)(EC_T_BYTE* pbyPDIn, EC_T_BYTE* pbyPDOut));
-		
-		EC_T_BOOL isRunning();
+		bool isRunning();
 		void join();
 		void stop();
 		
-		EC_T_BYTE* getPbyPDIn();
-		EC_T_BYTE* getPbyPDOut();
+		int getBufferSize()			{ return bufferSize; };
+		uint8_t* getInBuffer()		{ return inBuffer; };		// read from ethercat network
+		uint8_t* getOutBuffer()		{ return outBuffer; };		// gets written to ethercat network
+		std::mutex* getMutex()		{ return &m; };
+		std::condition_variable* getConditionalVariable()	{ return &cv; };
 		
 		masterState getMasterState();
+		
+		
+	protected:
 		void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr);
 		
-//    private:
+		
+	private:
 		static EtherCATMain* instance;
-		bool deepCopy;    //PDO gets copied
 		int nArgc;
 		char** ppArgv;
 		void (*callbackFctPtr)(EC_T_BYTE*, EC_T_BYTE*);
-		//         void (*callbackFctPtr)(EC_T_BYTE* pbyPDIn, EC_T_BYTE* pbyPDOut);
+		
+		int bufferSize;
+		uint8_t* inBuffer;
+		uint8_t* outBuffer;
+		
 		std::thread thread;    
 		std::mutex m;
 		std::condition_variable cv;
-		PDObuf inBuf, outBuf;
-
 	};
 };
 

@@ -18,48 +18,20 @@
 #include <Logging.h>
 
 
-EC_T_BYTE* pbyPDIn;
-EC_T_BYTE* pbyPDOut;
-
-// void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
-// {
-// 	static bool firstCall = true;
-// // 	if ( firstCall ) {
-// // 		startCallBackFct = clockSteady::now();
-// // 		firstCall = false;
-// // 	}
-// // 	stopCallBackFct = clockSteady::now();
-// // 	durationCallBackFct = stopCallBackFct - startCallBackFct;
-// // 	startCallBackFct = clockSteady::now();
-// 	
-// // 	std::cout << "callbackFct called" << std::endl;
-// 	
-// 	pbyPDIn = pbyPDInPtr;
-// 	pbyPDOut = pbyPDOutPtr;
-// // 	go = true;
-// 	// 	encoder = EC_GET_FRM_DWORD( pbyPDIn + 0 );
-// 	
-// 	// lese position von pointer und schreibe in globale variable von main
-// // 	if ( durationCallBackFct > durationCallBackFctMax ) durationCallBackFctMax = durationCallBackFct;
-// }
 using namespace ethercat;
 void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 {
-	static bool firstCall = true;
-	if ( firstCall ) {
-	//         startCallBackFct = clockSteady::now();
-		firstCall = false;
-		pbyPDIn = pbyPDInPtr;
-		pbyPDOut = pbyPDOutPtr;
-	}
-	EtherCATMain* obj = EtherCATMain::getInstance();
-	obj->inBuf.a = pbyPDOutPtr;
-	obj->inBuf.b = pbyPDInPtr;
-	obj->m.lock();
+	EtherCATMain* inst = EtherCATMain::getInstance();
+	
+	// copy to inBuffer from stack
+	memcpy(inst->getInBuffer(), pbyPDInPtr, inst->getBufferSize());
+	
+	// copy to stack from outBuffer
+	memcpy(pbyPDOutPtr, inst->getOutBuffer(), inst->getBufferSize());
+	
+	// wake conditional variable
+	inst->getConditionalVariable()->notify_one();
 }
-
-
-
 
 
 #if (defined ATEMRAS_SERVER)
@@ -1948,37 +1920,24 @@ EC_PF_LLREGISTER pfLlRegister = EC_NULL;
 /*-END OF SOURCE FILE--------------------------------------------------------*/
 
 
-int test(int a) {};
-
-// using namespace ethercat;
-
-// void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr);
-
-// void EtherCATMain::callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
-// {
-// 	
-// }
-
-// EtherCATMain::EtherCATMain(int nArgc, char* ppArgv[], void (*callbackFctPtr)(EC_T_BYTE* pbyPDIn, EC_T_BYTE* pbyPDOut)) :
-EtherCATMain::EtherCATMain(int nArgc, char* ppArgv[]) :
-nArgc(nArgc), ppArgv(ppArgv), deepCopy(false),
+EtherCATMain::EtherCATMain(int nArgc, char* ppArgv[], int bufferSize) :
+nArgc(nArgc), ppArgv(ppArgv), bufferSize(bufferSize),
 thread(mainEtherCAT, nArgc, ppArgv )
-// thread(mainEtherCAT, nArgc, ppArgv, &ethercat::EtherCATMain::callbackFct )
 { 
-// 	std::cout << "EtherCATMain()" << std::endl;
-// 	void (*callbackFctPtr)(EC_T_BYTE*, EC_T_BYTE*) = EtherCATMain::callbackFct;
-// 	callbackFctPtr = EtherCATMain::callbackFct;
-// 	void (*callbackFctPtr)(EC_T_BYTE*, EC_T_BYTE*);
-// 	callbackFctPtr = EtherCATMain::callbackFct;
-// 	thread(mainEtherCAT, nArgc, ppArgv, callbackFctPtr);
-// 	std::thread thread = thread(mainEtherCAT, nArgc, ppArgv);
+	inBuffer = new uint8_t[bufferSize];
+	outBuffer = new uint8_t[bufferSize];
 	ecatGetMasterState();
+}
+
+EtherCATMain::~EtherCATMain() {
+	delete []inBuffer;
+	delete []outBuffer;
 }
 
 EtherCATMain* EtherCATMain::instance;
 
-EtherCATMain* EtherCATMain::createInstance(int nArgc, char* ppArgv[]) {
-	if(instance == NULL) instance = new EtherCATMain(nArgc, ppArgv);
+EtherCATMain* EtherCATMain::createInstance(int nArgc, char* ppArgv[], int bufferSize) {
+	if(instance == NULL) instance = new EtherCATMain(nArgc, ppArgv, bufferSize);
 	return instance;
 }
 
@@ -1987,10 +1946,21 @@ EtherCATMain* EtherCATMain::getInstance() {
 }
 
 
-EC_T_BOOL EtherCATMain::isRunning()
+bool EtherCATMain::isRunning()
 {
 	return bRun;
 }
+
+void EtherCATMain::join()
+{
+	thread.join();
+}
+
+void EtherCATMain::stop()
+{
+	bRun = EC_FALSE;
+}
+
 
 masterState EtherCATMain::getMasterState()
 {
@@ -2003,28 +1973,4 @@ masterState EtherCATMain::getMasterState()
 		case eEcatState_OP			: return ethercat::OP;
 		case eEcatState_BOOTSTRAP	: return ethercat::BOOTSTRAP;
 	}
-}
-
-
-void EtherCATMain::join()
-{
-	thread.join();
-}
-
-void EtherCATMain::stop()
-{
-	bRun = EC_FALSE;
-}
-
-EC_T_BYTE* EtherCATMain::getPbyPDIn() {
-// 	return pbyPDIn;
-	return instance->inBuf.b;
-}
-
-EC_T_BYTE* EtherCATMain::getPbyPDOut() {
-// 	return pbyPDOut;
-// 	EtherCATMain* obj = EtherCATMain::getInstance();
-// 	EC_T_BYTE* PbyPDOut;
-	return instance->inBuf.a;
-// 	return pbyPDOut;
 }

@@ -23,12 +23,16 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 {
 	EtherCATMain* inst = EtherCATMain::getInstance();
 	
+	static int counter = 0;
+	
+	if (counter > 100) {		// 10 are not enough
 	// copy to inBuffer from stack
 	memcpy(inst->getInBuffer(), pbyPDInPtr, inst->getBufferSize());
 	
 	// copy to stack from outBuffer
 	memcpy(pbyPDOutPtr, inst->getOutBuffer(), inst->getBufferSize());
-	
+	}
+	else counter++;
 	// wake conditional variable
 	inst->getConditionalVariable()->notify_one();
 }

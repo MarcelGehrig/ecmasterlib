@@ -1098,8 +1098,8 @@ int mainEtherCAT(int nArgc, char* ppArgv[])
         sigemptyset(&SigSet);
         sigaddset(&SigSet, nSigNum);
         sigprocmask(SIG_BLOCK, &SigSet, NULL);
-        signal(SIGINT, SignalHandler);
-        signal(SIGTERM, SignalHandler);
+//         signal(SIGINT, SignalHandler);
+//         signal(SIGTERM, SignalHandler);
     }
 #endif /* LINUX && !RTAI */
 
@@ -1926,12 +1926,24 @@ EC_PF_LLREGISTER pfLlRegister = EC_NULL;
 
 EtherCATMain::EtherCATMain(int nArgc, char* ppArgv[], int bufferSize) :
 nArgc(nArgc), ppArgv(ppArgv), bufferSize(bufferSize),
+isDummyBoolean(false),
 thread(mainEtherCAT, nArgc, ppArgv )
 { 
 	inBuffer = new uint8_t[bufferSize];
 	outBuffer = new uint8_t[bufferSize];
+	//memset()? to set arrays to 0
 	ecatGetMasterState();
 }
+
+EtherCATMain::EtherCATMain(int bufferSize) :
+bufferSize(bufferSize), isDummyBoolean(true)
+{
+	inBuffer = new uint8_t[bufferSize];
+	outBuffer = new uint8_t[bufferSize];
+	memset(inBuffer, 0, bufferSize);
+	memset(outBuffer, 0, bufferSize);
+}
+
 
 EtherCATMain::~EtherCATMain() {
 	delete []inBuffer;
@@ -1942,6 +1954,12 @@ EtherCATMain* EtherCATMain::instance;
 
 EtherCATMain* EtherCATMain::createInstance(int nArgc, char* ppArgv[], int bufferSize) {
 	if(instance == NULL) instance = new EtherCATMain(nArgc, ppArgv, bufferSize);
+	return instance;
+}
+
+EtherCATMain* EtherCATMain::createDummyInstance(int bufferSize)
+{
+	if(instance == NULL) instance = new EtherCATMain(bufferSize);
 	return instance;
 }
 

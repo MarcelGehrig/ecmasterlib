@@ -26,11 +26,13 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 	static int counter = 0;
 	
 	if (counter > 100) {		// 10 are not enough
-	// copy to inBuffer from stack
-	memcpy(inst->getInBuffer(), pbyPDInPtr, inst->getBufferSize());
-	
-	// copy to stack from outBuffer
-	memcpy(pbyPDOutPtr, inst->getOutBuffer(), inst->getBufferSize());
+		// copy to inBuffer from stack
+		if ( inst->lockInBuffer.lockCount != 0 ) std::cout << "ERROR: lockInBuffer = " << inst->lockInBuffer.lockCount << std::endl;
+		memcpy(inst->getInBuffer(), pbyPDInPtr, inst->getBufferSize());
+		
+		// copy to stack from outBuffer
+		if ( inst->lockOutBuffer.lockCount != 0 ) std::cout << "ERROR: lockOutBuffer = " << inst->lockOutBuffer.lockCount << std::endl;
+		memcpy(pbyPDOutPtr, inst->getOutBuffer(), inst->getBufferSize());
 	}
 	else counter++;
 	// wake conditional variable
@@ -1978,3 +1980,46 @@ masterState EtherCATMain::getMasterState()
 		case eEcatState_BOOTSTRAP	: return ethercat::BOOTSTRAP;
 	}
 }
+
+
+// get from buffer functions
+EC_T_WORD EtherCATMain::getFrmWord(uint8_t* address)
+{
+	lockInBuffer.lock();
+	EC_GET_FRM_WORD( address );
+	lockInBuffer.unlock();
+}
+
+EC_T_DWORD EtherCATMain::getFrmDWord(uint8_t* address)
+{
+	lockInBuffer.lock();
+	EC_GET_FRM_DWORD( address );
+	lockInBuffer.unlock();
+}
+
+
+
+// set to buffer funcitons
+void EtherCATMain::setByte(uint8_t* address, EC_T_BYTE val)
+{
+	lockOutBuffer.lock();
+// 	EC_T_BYTE *pointer = static_cast<EC_T_BYTE*>( address )
+// 	*(pointer) = val;
+	*(address) = val;
+	lockOutBuffer.unlock();
+}
+
+void EtherCATMain::setWord(uint8_t* address, EC_T_WORD val)
+{
+	lockOutBuffer.lock();
+	EC_SETWORD( address, val );
+	lockOutBuffer.unlock();
+}
+
+void EtherCATMain::setDWord(uint8_t* address, EC_T_DWORD val)
+{
+	lockOutBuffer.lock();
+	EC_SETDWORD( address, val );
+	lockOutBuffer.unlock();
+}
+

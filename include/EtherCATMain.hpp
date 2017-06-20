@@ -44,6 +44,24 @@ namespace ethercat {
 		
 		masterState getMasterState();
 		
+		// set buffer funcitons
+		EC_T_BYTE getFrmByte ( uint8_t* address );
+		EC_T_WORD getFrmWord ( uint8_t* address );
+		EC_T_DWORD getFrmDWord ( uint8_t* address );
+		void setByte( uint8_t* address, EC_T_BYTE val );
+		void setWord( uint8_t* address, EC_T_WORD val );
+		void setDWord( uint8_t* address, EC_T_DWORD val );
+		
+		struct pseudoLock {
+			int lockCount;
+			void lock() { lockCount++; };
+			void unlock() { lockCount--; };
+		};
+		
+		pseudoLock lockInBuffer;
+		pseudoLock lockOutBuffer;
+		
+		
 		
 	protected:
 		void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr);

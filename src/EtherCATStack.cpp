@@ -155,10 +155,11 @@ EC_T_DWORD EtherCATStack(
         dwRetVal = dwRes;
         goto Exit;
     }
-#ifdef ATEMRAS_SERVER
+//#ifdef ATEMRAS_SERVER
     /*******************************/
     /* Start RAS server if enabled */
     /*******************************/
+	wServerPort = 6000;
     if (0xFFFF != wServerPort)
     {
         ATEMRAS_T_SRVPARMS oRemoteApiConfig;
@@ -177,7 +178,8 @@ EC_T_DWORD EtherCATStack(
         oRemoteApiConfig.dwMbxNotifyAmount  = 50;                   /* for the first pre-allocate 50 Notification spaces */
         oRemoteApiConfig.dwMbxUsrNotifySize = 3000;                 /* 3K user space for Mailbox Notifications */
         oRemoteApiConfig.dwCycErrInterval   = 500;                  /* span between to consecutive cyclic notifications of same type */
-        if (0 != nVerbose) LogMsg("Start Remote API Server now\n");
+LogMsg("Start Remote API Server now\n");
+		if (0 != nVerbose) LogMsg("Start Remote API Server now\n");
         dwRes = emRasSrvStart(oRemoteApiConfig, &S_pvRemoteApiSrvH);
         if (EC_E_NOERROR != dwRes)
         {
@@ -185,7 +187,7 @@ EC_T_DWORD EtherCATStack(
         }
         S_bRasSrvStarted = EC_TRUE;
     }
-#endif
+//#endif
     /******************************/
     /* Initialize EtherCAT master */
     /******************************/
@@ -802,8 +804,10 @@ static EC_T_VOID tEcJobTask(EC_T_VOID* pvThreadParamDesc)
                 else
                 {
                     LogError( "eUsrJob_ProcessAllRxFrames - not all previously sent frames are received/processed (frame loss)!" );
-                }
-            }
+// 					LogError( "test Exit");
+// 					exit(-1);
+               }
+             }
             else
             {
                 /* everything o.k.? If yes, decrement overload counter */

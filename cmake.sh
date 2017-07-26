@@ -3,8 +3,8 @@
 script="$(readlink -f $0)"
 script_dir="$(dirname $script)"
 
-build_dir="$script_dir/buildx86"
-install_dir="$(dirname $script_dir)/installx86"
+build_dir="$script_dir/build-x86"
+install_dir="$(dirname $script_dir)/install-x86"
 
 
 rm -rf "$build_dir"

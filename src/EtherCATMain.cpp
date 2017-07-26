@@ -28,6 +28,7 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 	if (counter > 100) {		// 10 are not enough
 		// copy to inBuffer from stack
 		if ( inst->lockInBuffer.lockCount != 0 ) std::cout << "ERROR: lockInBuffer = " << inst->lockInBuffer.lockCount << std::endl;
+// 		std::cout << "lockInBuffer = " << inst->lockInBuffer.lockCount << std::endl;
 		memcpy(inst->getInBuffer(), pbyPDInPtr, inst->getBufferSize());
 		
 		// copy to stack from outBuffer
@@ -1986,15 +1987,17 @@ masterState EtherCATMain::getMasterState()
 EC_T_WORD EtherCATMain::getFrmWord(uint8_t* address)
 {
 	lockInBuffer.lock();
-	EC_GET_FRM_WORD( address );
+	EC_T_WORD val = EC_GET_FRM_WORD( address );
 	lockInBuffer.unlock();
+	return val;
 }
 
 EC_T_DWORD EtherCATMain::getFrmDWord(uint8_t* address)
 {
 	lockInBuffer.lock();
-	EC_GET_FRM_DWORD( address );
+	EC_T_DWORD val = EC_GET_FRM_DWORD( address );
 	lockInBuffer.unlock();
+	return val;
 }
 
 

@@ -24,16 +24,36 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 	EtherCATMain* inst = EtherCATMain::getInstance();
 	
 	static int counter = 0;
+	static constexpr int maxRetries = 100;
 	
 	if (counter > 100) {		// 10 are not enough
+		
 		// copy to inBuffer from stack
-		if ( inst->lockInBuffer.lockCount != 0 ) std::cout << "ERROR: lockInBuffer = " << inst->lockInBuffer.lockCount << std::endl;
-// 		std::cout << "lockInBuffer = " << inst->lockInBuffer.lockCount << std::endl;
-		memcpy(inst->getInBuffer(), pbyPDInPtr, inst->getBufferSize());
+		int counterRetries = 0;
+		while ( (inst->lockInBuffer.lockCount != 0) && (counterRetries < maxRetries) ) {
+			usleep(1);
+			counterRetries++;
+		}
+		if (inst->lockInBuffer.lockCount != 0) {
+			std::cout << "WARNING: lockInBuffer.lockCount = " << inst->lockInBuffer.lockCount << "     retries: " << maxRetries << std::endl;
+		}
+		else {
+			memcpy(inst->getInBuffer(), pbyPDInPtr, inst->getBufferSize());
+		}
+		
 		
 		// copy to stack from outBuffer
-		if ( inst->lockOutBuffer.lockCount != 0 ) std::cout << "ERROR: lockOutBuffer = " << inst->lockOutBuffer.lockCount << std::endl;
-		memcpy(pbyPDOutPtr, inst->getOutBuffer(), inst->getBufferSize());
+		counterRetries = 0;
+		while ( (inst->lockOutBuffer.lockCount != 0) && (counterRetries < maxRetries) ) {
+			usleep(1);
+			counterRetries++;
+		}
+		if (inst->lockOutBuffer.lockCount != 0) {
+			std::cout << "WARNING: lockOutBuffer.lockCount = " << inst->lockOutBuffer.lockCount << "     retries: " << maxRetries << std::endl;
+		}
+		else {
+			memcpy(pbyPDOutPtr, inst->getOutBuffer(), inst->getBufferSize());
+		}
 	}
 	else counter++;
 	// wake conditional variable

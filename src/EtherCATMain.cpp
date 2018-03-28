@@ -961,7 +961,7 @@ int mainEtherCAT(int nArgc, char* ppArgv[])
 #if !(defined XENOMAI)
     EC_T_BOOL               bStartTimingTask    = EC_FALSE;
 #endif
-    EC_T_INT                nVerbose            = 3;
+    EC_T_INT                nVerbose            = 0;
 #if (defined UNDER_CE) && (_WIN32_WCE >= 0x600)
     BOOL                    bRes                = FALSE;
     DWORD                   dwAuxClkSysIntr     = 0;
@@ -978,6 +978,7 @@ int mainEtherCAT(int nArgc, char* ppArgv[])
     EC_T_OS_PARMS           oOsParms;
     EC_T_DCM_MODE           eDcmMode            = eDcmMode_BusShift;
     EC_T_BOOL               bCtlOff             = EC_FALSE;
+	char* 					licenseKey			= "";
 
     OsMemset(apLinkParms, 0, sizeof(apLinkParms));
     OsMemset(&TimingDesc, 0, sizeof(TimingDesc));
@@ -1121,8 +1122,8 @@ int mainEtherCAT(int nArgc, char* ppArgv[])
         sigemptyset(&SigSet);
         sigaddset(&SigSet, nSigNum);
         sigprocmask(SIG_BLOCK, &SigSet, NULL);
-//         signal(SIGINT, SignalHandler);
-//         signal(SIGTERM, SignalHandler);
+        signal(SIGINT, SignalHandler);
+        signal(SIGTERM, SignalHandler);
     }
 #endif /* LINUX && !RTAI */
 
@@ -1490,6 +1491,18 @@ int mainEtherCAT(int nArgc, char* ppArgv[])
         {
             bCtlOff = EC_TRUE;
         }
+        else if (OsStricmp(ptcWord, "-key") == 0)
+        {
+            /* Extract the config file name if it was not set within quotation marks */
+            ptcWord = GetNextWord((EC_T_CHAR**)&szCommandLine, &tcStorage);
+
+            if      (EC_NULL != ptcWord)           licenseKey = ptcWord;
+            else
+            {
+                nRetVal = SYNTAX_ERROR;
+                goto Exit;
+            }
+        }
         else
         {
            dwRes = CreateLinkParmsFromCmdLine(&ptcWord, (EC_T_CHAR**)&szCommandLine, &tcStorage, &bGetNextWord, &apLinkParms[dwNumLinkLayer]);
@@ -1716,8 +1729,8 @@ int mainEtherCAT(int nArgc, char* ppArgv[])
 // 	void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr);
     dwRes = EtherCATStack(   &oLogging,
                       eCnfType, pbyCnfData, dwCnfDataLen,
-//                       TimingDesc.dwBusCycleTimeUsec, nVerbose, dwDuration,
-                      TimingDesc.dwBusCycleTimeUsec, 0, dwDuration,
+                      TimingDesc.dwBusCycleTimeUsec, nVerbose, dwDuration,
+//                       TimingDesc.dwBusCycleTimeUsec, 0, dwDuration,
                       apLinkParms[0],
                       TimingDesc.pvTimingEvent, dwCpuIndex,
                       bEnaPerfJobs
@@ -1729,6 +1742,7 @@ int mainEtherCAT(int nArgc, char* ppArgv[])
                       , eDcmMode
                       , bCtlOff
                       ,&callbackFct
+                      ,licenseKey
                     );
     if (EC_E_NOERROR != dwRes)
     {
@@ -1949,24 +1963,14 @@ EC_PF_LLREGISTER pfLlRegister = EC_NULL;
 
 EtherCATMain::EtherCATMain(int nArgc, char* ppArgv[], int bufferSize) :
 nArgc(nArgc), ppArgv(ppArgv), bufferSize(bufferSize),
-isDummyBoolean(false),
 thread(mainEtherCAT, nArgc, ppArgv )
 { 
+	lockInBuffer.lockCount=0;
+	lockOutBuffer.lockCount=0;
 	inBuffer = new uint8_t[bufferSize];
 	outBuffer = new uint8_t[bufferSize];
-	//memset()? to set arrays to 0
 	ecatGetMasterState();
 }
-
-EtherCATMain::EtherCATMain(int bufferSize) :
-bufferSize(bufferSize), isDummyBoolean(true)
-{
-	inBuffer = new uint8_t[bufferSize];
-	outBuffer = new uint8_t[bufferSize];
-	memset(inBuffer, 0, bufferSize);
-	memset(outBuffer, 0, bufferSize);
-}
-
 
 EtherCATMain::~EtherCATMain() {
 	delete []inBuffer;
@@ -1977,12 +1981,6 @@ EtherCATMain* EtherCATMain::instance;
 
 EtherCATMain* EtherCATMain::createInstance(int nArgc, char* ppArgv[], int bufferSize) {
 	if(instance == NULL) instance = new EtherCATMain(nArgc, ppArgv, bufferSize);
-	return instance;
-}
-
-EtherCATMain* EtherCATMain::createDummyInstance(int bufferSize)
-{
-	if(instance == NULL) instance = new EtherCATMain(bufferSize);
 	return instance;
 }
 

@@ -92,6 +92,7 @@ EC_T_DWORD EtherCATStack(
    ,EC_T_DCM_MODE       eDcmMode                /* [in]  DCM mode */
    ,EC_T_BOOL           bDcmCtlOff              /* [in]  Disables / Enables the control loop for diagnosis */
    ,void (*callbackFctPtr)(EC_T_BYTE*, EC_T_BYTE*)
+   ,char*				licenseKey
 )
 {
 	
@@ -225,6 +226,13 @@ EC_T_DWORD EtherCATStack(
             LogError("Cannot initialize EtherCAT-Master! (Result = %s 0x%x)", ecatGetText(dwRes), dwRes);
             goto Exit;
         }
+        
+        if (strlen(licenseKey) > 1) {
+			LogMsg("LicenseKey: %s",licenseKey);
+			dwRes = ecatSetLicenseKey(licenseKey);
+			if (EC_E_NOERROR == dwRes) LogMsg("ACTIVATION SUCCESSFULL");
+			else 	 					LogError("ACTIVATION FAILED (Result = %s 0x%x)", ecatGetText(dwRes), dwRes);
+		}
     }
     
     /* Create cyclic task to trigger master jobs */

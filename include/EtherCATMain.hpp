@@ -27,15 +27,12 @@ namespace ethercat {
 	
 	class EtherCATMain {
         EtherCATMain(int nArgc, char* ppArgv[], int bufferSize);
-		EtherCATMain(int bufferSize);	//only for dummy instance, EtherCAT will NOT start
 		~EtherCATMain();
 	public:
 		static EtherCATMain* createInstance(int nArgc, char* ppArgv[], int bufferSize);
-		static EtherCATMain* createDummyInstance(int bufferSize);
 		static EtherCATMain* getInstance();
 		
 		bool isRunning();
-		bool isDummy() {return isDummyBoolean;};
 		void join();
 		void stop();
 		
@@ -79,7 +76,6 @@ namespace ethercat {
 		int bufferSize;
 		uint8_t* inBuffer;
 		uint8_t* outBuffer;
-		bool isDummyBoolean;
 		
 		std::thread thread;    
 		std::mutex m;

@@ -49,6 +49,7 @@ EC_T_DWORD EtherCATStack(
     ,EC_T_DCM_MODE      eDcmMode
     ,EC_T_BOOL          bCtlOff
     ,void (*callbackFctPtr)(EC_T_BYTE*, EC_T_BYTE*)
+	,char*				licenseKey
     );
 
 /*--------------------------------------------------------------------------*/

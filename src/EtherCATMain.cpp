@@ -22,11 +22,46 @@ using namespace ethercat;
 void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 {
 	EtherCATMain* inst = EtherCATMain::getInstance();
+	//TODO error if null
 	
 	static int counter = 0;
 	static constexpr int maxRetries = 100;
 	
-	if (counter > 100) {		// 10 are not enough
+	if (counter == 0) {
+		std::cout << "EtherCATMain, counter == 0: " << std::endl;
+		std::cout << "inst: " << inst << std::endl;
+		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
+		std::cout << "inst->getInBuffer():   " << inst->getInBuffer() << std::endl;
+		std::cout << "pbyPDInPtr:            " << pbyPDInPtr << std::endl;
+		std::cout << "inst->getOutBuffer():  " << inst->getOutBuffer() << std::endl;
+		std::cout << "pbyPDOutPtr:           " << pbyPDOutPtr << std::endl;
+		std::cout << std::endl;
+	}
+	
+	if (counter == 100) {
+		std::cout << "EtherCATMain, counter == 100: " << std::endl;
+		std::cout << "inst: " << inst << std::endl;
+		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
+		std::cout << "inst->getInBuffer():   " << inst->getInBuffer() << std::endl;
+		std::cout << "pbyPDInPtr:            " << pbyPDInPtr << std::endl;
+		std::cout << "inst->getOutBuffer():  " << inst->getOutBuffer() << std::endl;
+		std::cout << "pbyPDOutPtr:           " << pbyPDOutPtr << std::endl;
+		std::cout << std::endl;
+	}
+	
+	if (counter == 150) {
+		std::cout << "EtherCATMain, counter == 150: " << std::endl;
+		std::cout << "inst: " << inst << std::endl;
+		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
+		std::cout << "inst->getInBuffer():   " << inst->getInBuffer() << std::endl;
+		std::cout << "pbyPDInPtr:            " << pbyPDInPtr << std::endl;
+		std::cout << "inst->getOutBuffer():  " << inst->getOutBuffer() << std::endl;
+		std::cout << "pbyPDOutPtr:           " << pbyPDOutPtr << std::endl;
+		std::cout << std::endl;
+	}
+	
+	
+	if (counter > 150) {		// 10 are not enough
 		
 		// copy to inBuffer from stack
 		int counterRetries = 0;
@@ -55,7 +90,8 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 			memcpy(pbyPDOutPtr, inst->getOutBuffer(), inst->getBufferSize());
 		}
 	}
-	else counter++;
+	
+	if (counter<1000) counter++;
 	// wake conditional variable
 	inst->getConditionalVariable()->notify_one();
 }

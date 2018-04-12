@@ -31,10 +31,10 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 		std::cout << "EtherCATMain, counter == 0: " << std::endl;
 		std::cout << "inst: " << inst << std::endl;
 		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
-		std::cout << "inst->getInBuffer():   " << inst->getInBuffer() << std::endl;
-		std::cout << "pbyPDInPtr:            " << pbyPDInPtr << std::endl;
-		std::cout << "inst->getOutBuffer():  " << inst->getOutBuffer() << std::endl;
-		std::cout << "pbyPDOutPtr:           " << pbyPDOutPtr << std::endl;
+		std::cout << "inst->getInBuffer():   " << (void*)inst->getInBuffer() << std::endl;
+		std::cout << "pbyPDInPtr:            " << (void*)pbyPDInPtr << std::endl;
+		std::cout << "inst->getOutBuffer():  " << (void*)inst->getOutBuffer() << std::endl;
+		std::cout << "pbyPDOutPtr:           " << (void*)pbyPDOutPtr << std::endl;
 		std::cout << std::endl;
 	}
 	
@@ -42,10 +42,10 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 		std::cout << "EtherCATMain, counter == 100: " << std::endl;
 		std::cout << "inst: " << inst << std::endl;
 		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
-		std::cout << "inst->getInBuffer():   " << inst->getInBuffer() << std::endl;
-		std::cout << "pbyPDInPtr:            " << pbyPDInPtr << std::endl;
-		std::cout << "inst->getOutBuffer():  " << inst->getOutBuffer() << std::endl;
-		std::cout << "pbyPDOutPtr:           " << pbyPDOutPtr << std::endl;
+		std::cout << "inst->getInBuffer():   " << (void*)inst->getInBuffer() << std::endl;
+		std::cout << "pbyPDInPtr:            " << (void*)pbyPDInPtr << std::endl;
+		std::cout << "inst->getOutBuffer():  " << (void*)inst->getOutBuffer() << std::endl;
+		std::cout << "pbyPDOutPtr:           " << (void*)pbyPDOutPtr << std::endl;
 		std::cout << std::endl;
 	}
 	
@@ -53,10 +53,10 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 		std::cout << "EtherCATMain, counter == 150: " << std::endl;
 		std::cout << "inst: " << inst << std::endl;
 		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
-		std::cout << "inst->getInBuffer():   " << inst->getInBuffer() << std::endl;
-		std::cout << "pbyPDInPtr:            " << pbyPDInPtr << std::endl;
-		std::cout << "inst->getOutBuffer():  " << inst->getOutBuffer() << std::endl;
-		std::cout << "pbyPDOutPtr:           " << pbyPDOutPtr << std::endl;
+		std::cout << "inst->getInBuffer():   " << (void*)inst->getInBuffer() << std::endl;
+		std::cout << "pbyPDInPtr:            " << (void*)pbyPDInPtr << std::endl;
+		std::cout << "inst->getOutBuffer():  " << (void*)inst->getOutBuffer() << std::endl;
+		std::cout << "pbyPDOutPtr:           " << (void*)pbyPDOutPtr << std::endl;
 		std::cout << std::endl;
 	}
 	

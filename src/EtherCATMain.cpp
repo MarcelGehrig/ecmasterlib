@@ -27,41 +27,41 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 	static int counter = 0;
 	static constexpr int maxRetries = 100;
 	
-	if (counter == 0) {
-		std::cout << "EtherCATMain, counter == 0: " << std::endl;
-		std::cout << "inst: " << inst << std::endl;
-		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
-		std::cout << "inst->getInBuffer():   " << (void*)inst->getInBuffer() << std::endl;
-		std::cout << "pbyPDInPtr:            " << (void*)pbyPDInPtr << std::endl;
-		std::cout << "inst->getOutBuffer():  " << (void*)inst->getOutBuffer() << std::endl;
-		std::cout << "pbyPDOutPtr:           " << (void*)pbyPDOutPtr << std::endl;
-		std::cout << std::endl;
-	}
+// 	if (counter == 0) {
+// 		std::cout << "EtherCATMain, counter == 0: " << std::endl;
+// 		std::cout << "inst: " << inst << std::endl;
+// 		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
+// 		std::cout << "inst->getInBuffer():   " << (void*)inst->getInBuffer() << std::endl;
+// 		std::cout << "pbyPDInPtr:            " << (void*)pbyPDInPtr << std::endl;
+// 		std::cout << "inst->getOutBuffer():  " << (void*)inst->getOutBuffer() << std::endl;
+// 		std::cout << "pbyPDOutPtr:           " << (void*)pbyPDOutPtr << std::endl;
+// 		std::cout << std::endl;
+// 	}
+// 	
+// 	if (counter == 100) {
+// 		std::cout << "EtherCATMain, counter == 100: " << std::endl;
+// 		std::cout << "inst: " << inst << std::endl;
+// 		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
+// 		std::cout << "inst->getInBuffer():   " << (void*)inst->getInBuffer() << std::endl;
+// 		std::cout << "pbyPDInPtr:            " << (void*)pbyPDInPtr << std::endl;
+// 		std::cout << "inst->getOutBuffer():  " << (void*)inst->getOutBuffer() << std::endl;
+// 		std::cout << "pbyPDOutPtr:           " << (void*)pbyPDOutPtr << std::endl;
+// 		std::cout << std::endl;
+// 	}
+// 	
+// 	if (counter == 150) {
+// 		std::cout << "EtherCATMain, counter == 150: " << std::endl;
+// 		std::cout << "inst: " << inst << std::endl;
+// 		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
+// 		std::cout << "inst->getInBuffer():   " << (void*)inst->getInBuffer() << std::endl;
+// 		std::cout << "pbyPDInPtr:            " << (void*)pbyPDInPtr << std::endl;
+// 		std::cout << "inst->getOutBuffer():  " << (void*)inst->getOutBuffer() << std::endl;
+// 		std::cout << "pbyPDOutPtr:           " << (void*)pbyPDOutPtr << std::endl;
+// 		std::cout << std::endl;
+// 	}
 	
-	if (counter == 100) {
-		std::cout << "EtherCATMain, counter == 100: " << std::endl;
-		std::cout << "inst: " << inst << std::endl;
-		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
-		std::cout << "inst->getInBuffer():   " << (void*)inst->getInBuffer() << std::endl;
-		std::cout << "pbyPDInPtr:            " << (void*)pbyPDInPtr << std::endl;
-		std::cout << "inst->getOutBuffer():  " << (void*)inst->getOutBuffer() << std::endl;
-		std::cout << "pbyPDOutPtr:           " << (void*)pbyPDOutPtr << std::endl;
-		std::cout << std::endl;
-	}
 	
-	if (counter == 150) {
-		std::cout << "EtherCATMain, counter == 150: " << std::endl;
-		std::cout << "inst: " << inst << std::endl;
-		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
-		std::cout << "inst->getInBuffer():   " << (void*)inst->getInBuffer() << std::endl;
-		std::cout << "pbyPDInPtr:            " << (void*)pbyPDInPtr << std::endl;
-		std::cout << "inst->getOutBuffer():  " << (void*)inst->getOutBuffer() << std::endl;
-		std::cout << "pbyPDOutPtr:           " << (void*)pbyPDOutPtr << std::endl;
-		std::cout << std::endl;
-	}
-	
-	
-	if (counter > 150) {		// 10 are not enough
+	if (counter > 200) {		// 10 are not enough
 		
 		// copy to inBuffer from stack
 		int counterRetries = 0;

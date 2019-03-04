@@ -18,7 +18,7 @@
 #include <Logging.h>
 
 
-using namespace ethercat;
+using namespace ecmasterlib;
 void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 {
 	EtherCATMain* inst = EtherCATMain::getInstance();
@@ -1158,8 +1158,8 @@ int mainEtherCAT(int nArgc, char* ppArgv[])
         sigemptyset(&SigSet);
         sigaddset(&SigSet, nSigNum);
         sigprocmask(SIG_BLOCK, &SigSet, NULL);
-        signal(SIGINT, SignalHandler);
-        signal(SIGTERM, SignalHandler);
+//         signal(SIGINT, SignalHandler);
+//         signal(SIGTERM, SignalHandler);
     }
 #endif /* LINUX && !RTAI */
 
@@ -1780,6 +1780,7 @@ int mainEtherCAT(int nArgc, char* ppArgv[])
                       ,&callbackFct
                       ,licenseKey
                     );
+    OsDbgMsg( "---EtherCATStack finished" );
     if (EC_E_NOERROR != dwRes)
     {
         goto Exit;
@@ -2045,17 +2046,25 @@ masterState EtherCATMain::getMasterState()
 {
 	switch ( ecatGetMasterState() ) 
 	{
-		case eEcatState_UNKNOWN		: return ethercat::UNKNOWN;
-		case eEcatState_INIT		: return ethercat::INIT;
-		case eEcatState_PREOP		: return ethercat::PREOP;
-		case eEcatState_SAFEOP		: return ethercat::SAFEOP;
-		case eEcatState_OP			: return ethercat::OP;
-		case eEcatState_BOOTSTRAP	: return ethercat::BOOTSTRAP;
+		case eEcatState_UNKNOWN		: return ecmasterlib::UNKNOWN;
+		case eEcatState_INIT		: return ecmasterlib::INIT;
+		case eEcatState_PREOP		: return ecmasterlib::PREOP;
+		case eEcatState_SAFEOP		: return ecmasterlib::SAFEOP;
+		case eEcatState_OP			: return ecmasterlib::OP;
+		case eEcatState_BOOTSTRAP	: return ecmasterlib::BOOTSTRAP;
 	}
 }
 
 
 // get from buffer functions
+EC_T_BYTE EtherCATMain::getFrmByte(uint8_t* address)
+{
+	lockInBuffer.lock();
+	EC_T_WORD val = *( address );
+	lockInBuffer.unlock();
+	return val;
+}
+
 EC_T_WORD EtherCATMain::getFrmWord(uint8_t* address)
 {
 	lockInBuffer.lock();

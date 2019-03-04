@@ -728,7 +728,10 @@ Exit:
 #endif
 
     /* Deinitialize master */
-    dwRes = ecatDeinitMaster();
+    LogMsg( "ecatDeinitMaster() should be called here." );
+    LogMsg( "But this would provoke a ' double free or corruption (out):' error." );
+//     dwRes = ecatDeinitMaster();
+    
     if (EC_E_NOERROR != dwRes)
     {
         LogError("Cannot de-initialize EtherCAT-Master! %s (0x%lx)", ecatGetText(dwRes), dwRes);

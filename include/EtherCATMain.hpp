@@ -12,7 +12,7 @@
 #include <EcType.h>
 #include <EcOs.h>
 
-namespace ethercat {
+namespace ecmasterlib {
 	
 	enum masterState {
 		UNKNOWN,

@@ -209,6 +209,7 @@
 /* timer settings */
 /******************/
 #define CYCLE_TIME          1           /* 1 msec */
+// #define CYCLE_TIME          0.20           /* 1 msec */
 #define BASE_PERIOD         1000        /* 1000 usec */
 
 /***********************************************/

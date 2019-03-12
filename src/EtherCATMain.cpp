@@ -60,6 +60,9 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 // 		std::cout << std::endl;
 // 	}
 	
+	auto cv2 = inst->getConditionalVariable2();
+	auto m2 = inst->getMutex2();
+	
 	
 	if (counter > 200) {		// 10 are not enough
 		
@@ -94,6 +97,12 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 	if (counter<1000) counter++;
 	// wake conditional variable
 	inst->getConditionalVariable()->notify_one();
+	
+	if (inst->wait) {
+		std::unique_lock<std::mutex> lk2(*m2);
+		cv2->wait(lk2);
+		lk2.unlock();
+	}
 }
 
 
@@ -1209,6 +1218,8 @@ int mainEtherCAT(int nArgc, char* ppArgv[])
 #if (defined RTAI)
     TimingDesc.dwBusCycleTimeUsec = G_dwBusCycleTimeUsec;
 #else
+	std::cout << "ECMASTERLIB: CYCLE_TIME: " << CYCLE_TIME << std::endl;
+// 	std::cout << "ECMASTERLIB: G_dwBusCycleTimeUsec: " << G_dwBusCycleTimeUsec << std::endl;
     TimingDesc.dwBusCycleTimeUsec = CYCLE_TIME * 1000;
 #endif
 
@@ -2002,6 +2013,7 @@ EtherCATMain::EtherCATMain(int nArgc, char* ppArgv[], int bufferSize) :
 nArgc(nArgc), ppArgv(ppArgv), bufferSize(bufferSize),
 thread(mainEtherCAT, nArgc, ppArgv )
 { 
+	std::cout << "ECMain: Buffer size: " << bufferSize << std::endl;
 	lockInBuffer.lockCount=0;
 	lockOutBuffer.lockCount=0;
 	inBuffer = new uint8_t[bufferSize];

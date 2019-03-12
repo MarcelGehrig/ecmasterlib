@@ -37,13 +37,19 @@ configure_package_config_file(
 
 
 ADD_LIBRARY(ecmasterlib SHARED
-							src/EtherCATStack.cpp
-							src/EtherCATMain.cpp
-							src/ecatDemoCommon.cpp
-							src/ecatNotification.cpp
-							src/Logging.cpp
-							src/selectLinkLayer.cpp )
-							
+	      src/EtherCATStack.cpp
+	      src/EtherCATMain.cpp
+	      src/ecatDemoCommon.cpp
+	      src/ecatNotification.cpp
+	      src/Logging.cpp
+	      src/selectLinkLayer.cpp
+	      
+	      
+	      
+# 	      tests/simple.cpp
+	      )
+
+	
 target_link_libraries(ecmasterlib AtemRasSrv EcMaster pthread dl rt)
 
 # files required for 'find_package'
@@ -62,3 +68,4 @@ INSTALL(DIRECTORY 	${CMAKE_CURRENT_SOURCE_DIR}/include/SDK/
 					DESTINATION include)
 
 add_subdirectory(src)
+#add_subdirectory(tests)

@@ -12,7 +12,7 @@
 #include <EcType.h>
 #include <EcOs.h>
 
-namespace ecmasterlib {
+namespace ethercat {
 	
 	enum masterState {
 		UNKNOWN,
@@ -41,8 +41,6 @@ namespace ecmasterlib {
 		uint8_t* getOutBuffer()		{ return outBuffer; };		// gets written to ethercat network
 		std::mutex* getMutex()		{ return &m; };
 		std::condition_variable* getConditionalVariable()	{ return &cv; };
-		std::mutex* getMutex2()		{ return &m2; };
-		std::condition_variable* getConditionalVariable2()	{ return &cv2; };
 		
 		masterState getMasterState();
 		
@@ -63,7 +61,6 @@ namespace ecmasterlib {
 		pseudoLock lockInBuffer;
 		pseudoLock lockOutBuffer;
 		
-		bool wait = false;
 		
 		
 	protected:
@@ -83,8 +80,6 @@ namespace ecmasterlib {
 		std::thread thread;    
 		std::mutex m;
 		std::condition_variable cv;
-		std::mutex m2;
-		std::condition_variable cv2;
 	};
 };
 

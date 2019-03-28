@@ -1550,6 +1550,12 @@ int mainEtherCAT(int nArgc, char* ppArgv[])
                 goto Exit;
             }
         }
+        else if (OsStricmp(ptcWord, "-c") == 0)
+        {
+            /* Ignored in ecmasterlib 
+			 * Used for EEROS HAL */
+			GetNextWord((EC_T_CHAR**)&szCommandLine, &tcStorage);
+        }
         else
         {
            dwRes = CreateLinkParmsFromCmdLine(&ptcWord, (EC_T_CHAR**)&szCommandLine, &tcStorage, &bGetNextWord, &apLinkParms[dwNumLinkLayer]);

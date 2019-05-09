@@ -72,8 +72,8 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 			usleep(1);
 			counterRetries++;
 		}
-		if (inst->lockInBuffer.lockCount != 0) {
-			std::cout << "WARNING: lockInBuffer.lockCount = " << inst->lockInBuffer.lockCount << "     retries: " << maxRetries << std::endl;
+		if (inst->lockInBuffer.lockCount > 0) {
+// 			std::cout << "WARNING: lockInBuffer.lockCount = " << inst->lockInBuffer.lockCount << "     retries: " << maxRetries << std::endl;
 		}
 		else {
 			memcpy(inst->getInBuffer(), pbyPDInPtr, inst->getBufferSize());
@@ -86,19 +86,29 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 			usleep(1);
 			counterRetries++;
 		}
-		if (inst->lockOutBuffer.lockCount != 0) {
-			std::cout << "WARNING: lockOutBuffer.lockCount = " << inst->lockOutBuffer.lockCount << "     retries: " << maxRetries << std::endl;
+		if (inst->lockOutBuffer.lockCount > 0) {
+// 			std::cout << "WARNING: lockOutBuffer.lockCount = " << inst->lockOutBuffer.lockCount << "     retries: " << maxRetries << std::endl;
 		}
 		else {
 			memcpy(pbyPDOutPtr, inst->getOutBuffer(), inst->getBufferSize());
 		}
 	}
 	
-	if (counter<1000) counter++;
+	if (counter<10000) counter++;
+	
 	// wake conditional variable
 	inst->getConditionalVariable()->notify_one();
 	
-	if (inst->wait) {
+	if (inst->waitForEeros) {
+// 	if (counter==9000) std::cout << "start waiting" << std::endl;
+// 	if (counter>9000) {
+// 	if (false) {
+		static bool startedWaitingComunicated = false;
+		if ( !startedWaitingComunicated ) {
+			std::cout << "waiting--------------------------------------------------------" << std::endl;
+			startedWaitingComunicated = true;
+		}
+		
 		std::unique_lock<std::mutex> lk2(*m2);
 		cv2->wait(lk2);
 		lk2.unlock();
@@ -2016,7 +2026,10 @@ EC_PF_LLREGISTER pfLlRegister = EC_NULL;
 
 
 EtherCATMain::EtherCATMain(int nArgc, char* ppArgv[], int bufferSize) :
-nArgc(nArgc), ppArgv(ppArgv), bufferSize(bufferSize),
+nArgc(nArgc),
+ppArgv(ppArgv),
+bufferSize(bufferSize),
+waitForEeros(false),
 thread(mainEtherCAT, nArgc, ppArgv )
 { 
 	std::cout << "ECMain: Buffer size: " << bufferSize << std::endl;

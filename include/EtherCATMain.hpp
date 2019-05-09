@@ -43,6 +43,8 @@ namespace ecmasterlib {
 		std::condition_variable* getConditionalVariable()	{ return &cv; };
 		std::mutex* getMutex2()		{ return &m2; };
 		std::condition_variable* getConditionalVariable2()	{ return &cv2; };
+		void startWaitingForEeros()	{ waitForEeros = true; };
+		void stopWaitingForEeros()	{ waitForEeros = false; };
 		
 		masterState getMasterState();
 		
@@ -63,7 +65,7 @@ namespace ecmasterlib {
 		pseudoLock lockInBuffer;
 		pseudoLock lockOutBuffer;
 		
-		bool wait = false;
+		bool waitForEeros;
 		
 		
 	protected:

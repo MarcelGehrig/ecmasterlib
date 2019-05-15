@@ -16,14 +16,14 @@ using namespace ethercat;
 
 void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 {
-	EtherCATMain* inst = EtherCATMain::getInstance();
+	EcMasterlibMain* inst = EcMasterlibMain::getInstance();
 	//TODO error if null
 	
 	static int counter = 0;
 	static constexpr int maxRetries = 100;
 	
 // 	if (counter == 0) {
-// 		std::cout << "EtherCATMain, counter == 0: " << std::endl;
+// 		std::cout << "EcMasterlibMain, counter == 0: " << std::endl;
 // 		std::cout << "inst: " << inst << std::endl;
 // 		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
 // 		std::cout << "inst->getInBuffer():   " << (void*)inst->getInBuffer() << std::endl;
@@ -34,7 +34,7 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 // 	}
 // 	
 // 	if (counter == 100) {
-// 		std::cout << "EtherCATMain, counter == 100: " << std::endl;
+// 		std::cout << "EcMasterlibMain, counter == 100: " << std::endl;
 // 		std::cout << "inst: " << inst << std::endl;
 // 		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
 // 		std::cout << "inst->getInBuffer():   " << (void*)inst->getInBuffer() << std::endl;
@@ -45,7 +45,7 @@ void callbackFct(EC_T_BYTE* pbyPDInPtr, EC_T_BYTE* pbyPDOutPtr)
 // 	}
 // 	
 // 	if (counter == 150) {
-// 		std::cout << "EtherCATMain, counter == 150: " << std::endl;
+// 		std::cout << "EcMasterlibMain, counter == 150: " << std::endl;
 // 		std::cout << "inst: " << inst << std::endl;
 // 		std::cout << "inst->getBufferSize(): " << inst->getBufferSize() << std::endl;
 // 		std::cout << "inst->getInBuffer():   " << (void*)inst->getInBuffer() << std::endl;
@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
 
 
 
-EtherCATMain::EtherCATMain(int nArgc, char* ppArgv[], int bufferSize) :
+EcMasterlibMain::EcMasterlibMain(int nArgc, char* ppArgv[], int bufferSize) :
 nArgc(nArgc), ppArgv(ppArgv), bufferSize(bufferSize),
 thread(mainEtherCAT, nArgc, ppArgv )
 { 
@@ -144,40 +144,40 @@ thread(mainEtherCAT, nArgc, ppArgv )
 	ecatGetMasterState();
 }
 
-EtherCATMain::~EtherCATMain() {
+EcMasterlibMain::~EcMasterlibMain() {
 	delete []inBuffer;
 	delete []outBuffer;
 }
 
-EtherCATMain* EtherCATMain::instance;
+EcMasterlibMain* EcMasterlibMain::instance;
 
-EtherCATMain* EtherCATMain::createInstance(int nArgc, char* ppArgv[], int bufferSize) {
-	if(instance == NULL) instance = new EtherCATMain(nArgc, ppArgv, bufferSize);
+EcMasterlibMain* EcMasterlibMain::createInstance(int nArgc, char* ppArgv[], int bufferSize) {
+	if(instance == NULL) instance = new EcMasterlibMain(nArgc, ppArgv, bufferSize);
 	return instance;
 }
 
-EtherCATMain* EtherCATMain::getInstance() {
+EcMasterlibMain* EcMasterlibMain::getInstance() {
 	return instance;
 }
 
 
-bool EtherCATMain::isRunning()
+bool EcMasterlibMain::isRunning()
 {
 	return bRun;
 }
 
-void EtherCATMain::join()
+void EcMasterlibMain::join()
 {
 	thread.join();
 }
 
-void EtherCATMain::stop()
+void EcMasterlibMain::stop()
 {
 	bRun = EC_FALSE;
 }
 
 
-masterState EtherCATMain::getMasterState()
+masterState EcMasterlibMain::getMasterState()
 {
 	switch ( ecatGetMasterState() ) 
 	{
@@ -192,7 +192,7 @@ masterState EtherCATMain::getMasterState()
 
 
 // get from buffer functions
-EC_T_WORD EtherCATMain::getFrmWord(uint8_t* address)
+EC_T_WORD EcMasterlibMain::getFrmWord(uint8_t* address)
 {
 	lockInBuffer.lock();
 	EC_T_WORD val = EC_GET_FRM_WORD( address );
@@ -200,7 +200,7 @@ EC_T_WORD EtherCATMain::getFrmWord(uint8_t* address)
 	return val;
 }
 
-EC_T_DWORD EtherCATMain::getFrmDWord(uint8_t* address)
+EC_T_DWORD EcMasterlibMain::getFrmDWord(uint8_t* address)
 {
 	lockInBuffer.lock();
 	EC_T_DWORD val = EC_GET_FRM_DWORD( address );
@@ -211,7 +211,7 @@ EC_T_DWORD EtherCATMain::getFrmDWord(uint8_t* address)
 
 
 // set to buffer funcitons
-void EtherCATMain::setByte(uint8_t* address, EC_T_BYTE val)
+void EcMasterlibMain::setByte(uint8_t* address, EC_T_BYTE val)
 {
 	lockOutBuffer.lock();
 // 	EC_T_BYTE *pointer = static_cast<EC_T_BYTE*>( address )
@@ -220,14 +220,14 @@ void EtherCATMain::setByte(uint8_t* address, EC_T_BYTE val)
 	lockOutBuffer.unlock();
 }
 
-void EtherCATMain::setWord(uint8_t* address, EC_T_WORD val)
+void EcMasterlibMain::setWord(uint8_t* address, EC_T_WORD val)
 {
 	lockOutBuffer.lock();
 	EC_SETWORD( address, val );
 	lockOutBuffer.unlock();
 }
 
-void EtherCATMain::setDWord(uint8_t* address, EC_T_DWORD val)
+void EcMasterlibMain::setDWord(uint8_t* address, EC_T_DWORD val)
 {
 	lockOutBuffer.lock();
 	EC_SETDWORD( address, val );

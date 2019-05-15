@@ -38,15 +38,11 @@ configure_package_config_file(
 
 ADD_LIBRARY(ecmasterlib SHARED
 	      src/EtherCATStack.cpp
-	      src/EtherCATMain.cpp
+	      src/EcMasterlibMain.cpp
 	      src/ecatDemoCommon.cpp
 	      src/ecatNotification.cpp
 	      src/Logging.cpp
 	      src/selectLinkLayer.cpp
-	      
-	      
-	      
-# 	      tests/simple.cpp
 	      )
 
 	
@@ -61,7 +57,7 @@ install(
 		)
 
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/libecmasterlib.so DESTINATION lib)
-INSTALL(FILES 	${CMAKE_CURRENT_SOURCE_DIR}/include/EtherCATMain.hpp
+INSTALL(FILES 	${CMAKE_CURRENT_SOURCE_DIR}/include/EcMasterlibMain.hpp
 				DESTINATION include)
 INSTALL(DIRECTORY 	${CMAKE_CURRENT_SOURCE_DIR}/include/SDK/
 					${CMAKE_CURRENT_SOURCE_DIR}/include/SDK/Linux/

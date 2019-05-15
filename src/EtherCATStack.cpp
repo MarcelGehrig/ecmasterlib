@@ -7,7 +7,7 @@
 /*-INCLUDES------------------------------------------------------------------*/
 #include <AtEthercat.h>
 
-#include <EtherCATMain.hpp>
+#include <EcMasterlibMain.hpp>
 #include <EtherCATStack.h>
 #include <Logging.h>
 

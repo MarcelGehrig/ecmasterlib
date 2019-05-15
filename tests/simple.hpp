@@ -1,5 +1,5 @@
-#ifndef ETHERCAT_ETHERCATMAIN_HPP_
-#define ETHERCAT_ETHERCATMAIN_HPP_
+#ifndef ETHERCAT_EcMasterlibMain_HPP_
+#define ETHERCAT_EcMasterlibMain_HPP_
 
 #include <iostream>
 #include <thread>
@@ -25,12 +25,12 @@ namespace ethercat {
 	};
 	
 	
-	class EtherCATMain {
-        EtherCATMain(int nArgc, char* ppArgv[], int bufferSize);
-		~EtherCATMain();
+	class EcMasterlibMain {
+        EcMasterlibMain(int nArgc, char* ppArgv[], int bufferSize);
+		~EcMasterlibMain();
 	public:
-		static EtherCATMain* createInstance(int nArgc, char* ppArgv[], int bufferSize);
-		static EtherCATMain* getInstance();
+		static EcMasterlibMain* createInstance(int nArgc, char* ppArgv[], int bufferSize);
+		static EcMasterlibMain* getInstance();
 		
 		bool isRunning();
 		void join();
@@ -68,7 +68,7 @@ namespace ethercat {
 		
 		
 	private:
-		static EtherCATMain* instance;
+		static EcMasterlibMain* instance;
 		int nArgc;
 		char** ppArgv;
 		void (*callbackFctPtr)(EC_T_BYTE*, EC_T_BYTE*);
@@ -83,4 +83,4 @@ namespace ethercat {
 	};
 };
 
-#endif // ETHERCAT_ETHERCATMAIN_HPP_
+#endif // ETHERCAT_EcMasterlibMain_HPP_

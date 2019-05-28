@@ -43,6 +43,7 @@ ADD_LIBRARY(ecmasterlib SHARED
 	      src/ecatNotification.cpp
 	      src/Logging.cpp
 	      src/selectLinkLayer.cpp
+	      src/EtherCATInterfaceBase.cpp
 	      )
 
 	
@@ -58,6 +59,10 @@ install(
 
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/libecmasterlib.so DESTINATION lib)
 INSTALL(FILES 	${CMAKE_CURRENT_SOURCE_DIR}/include/EcMasterlibMain.hpp
+				DESTINATION include)
+INSTALL(FILES 	${CMAKE_CURRENT_SOURCE_DIR}/include/EtherCATInterfaceBase.hpp
+				DESTINATION include)
+INSTALL(FILES 	${CMAKE_CURRENT_SOURCE_DIR}/include/EtherCATInterfaceBase_config.hpp
 				DESTINATION include)
 INSTALL(DIRECTORY 	${CMAKE_CURRENT_SOURCE_DIR}/include/SDK/
 					${CMAKE_CURRENT_SOURCE_DIR}/include/SDK/Linux/

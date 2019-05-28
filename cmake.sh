@@ -14,7 +14,7 @@ echo rm -rf "$build_dir"
 mkdir -p $build_dir
 pushd $build_dir
 echo cmake -DCMAKE_INSTALL_PREFIX="$install_dir" ..
-cmake -DCMAKE_INSTALL_PREFIX="$install_dir" -g ..
+cmake -DCMAKE_BUILD_TYPE="RelWithDebInfo" -DCMAKE_INSTALL_PREFIX="$install_dir" -g ..
 make
 make install
 popd
